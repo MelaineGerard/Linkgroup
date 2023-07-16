@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}LinkGroup - Liste des liens du groupe
+	{{ linkGroup.name }}
+{% endblock %}
+
+{% block body %}
+	<div class="container mx-auto px-16 mt-4">
+		<h1 class="text-3xl text-center font-bold">Liste des liens pour
+			{{ linkGroup.name }}
+		</h1>
+
+		{% if is_granted('ROLE_USER') %}
+			<div class="flex justify-end">
+				<a href="{{ path('app_link_group_add_link', {slug: linkGroup.slug}) }}">
+					<button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none">Ajouter un lien</button>
+				</a>
+			</div>
+		{% endif %}
+
+
+		<div class="w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg">
+			{% for link in linkGroup.links %}
+				<a target="_blank" href="{{ link.url }}" class="block w-full px-4 py-2 border-b border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700">
+					{{ link.name }}
+				</a>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock %}

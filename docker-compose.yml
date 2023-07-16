@@ -1,21 +1,26 @@
-version: '3'
+version: "3.8"
 
 services:
-###> doctrine/doctrine-bundle ###
-  database:
-    image: postgres:${POSTGRES_VERSION:-15}-alpine
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
-      POSTGRES_USER: ${POSTGRES_USER:-app}
+  linkgroup:
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile
+    image: linkgroup:latest
+    container_name: linkgroup
     volumes:
-      - database_data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
-###< doctrine/doctrine-bundle ###
+      - ./var:/var/www/linkgroup/var:rw
+      - ./.env.local:/var/www/linkgroup/.env.local:rw
+    tty: true
+    labels:
+      - traefik.http.routers.linkgroup.rule=Host(`linkgroup.melaine-gerard.fr`)
+      - traefik.http.routers.linkgroup.tls=true
+      - traefik.http.routers.linkgroup.tls.certresolver=lets-encrypt
+      - traefik.port=80
+      - "traefik.enable=true"
+    networks:
+      - local
 
-volumes:
-###> doctrine/doctrine-bundle ###
-  database_data:
-###< doctrine/doctrine-bundle ###
+networks:
+  local:
+    name: local
+    external: true
